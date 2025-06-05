@@ -1,19 +1,17 @@
-#!/bin/bash
+FROM php:8.2-fpm
 
-# Copiar o arquivo .env para o diretório de trabalho
-cp /etc/secrets/.env .env
+RUN apt-get update && apt-get install -y \
+    git zip unzip libzip-dev libpng-dev libonig-dev libxml2-dev \
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
-# Instalar dependências do Composer
-composer install --no-dev --optimize-autoloader
+WORKDIR /var/www/html
 
-# Limpar caches
-php artisan optimize:clear
+COPY . .
 
-# Cache de configurações
-php artisan config:cache
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Cache de rotas
-php artisan route:cache
+RUN composer install --no-dev --optimize-autoloader
 
-# Rodar as migrações
-php artisan migrate --force
+EXPOSE 9000
+
+CMD ["php-fpm"]
