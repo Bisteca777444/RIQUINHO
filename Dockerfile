@@ -1,31 +1,22 @@
 FROM php:8.2-fpm
-RUN apk update && apt add --no-cache \
+
+RUN apt-get update && apt-get install -y \
     bash \
     curl \
     git \
-    zip \
     unzip \
+    zip \
     libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    oniguruma-dev \
-    autoconf \
-    build-base \
-    shadow \
-    openssh-client \
-    postgresql-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libonig-dev \
     libxml2-dev \
-    icu-dev
-
-# Instala extensões PHP necessárias
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install \
-    pdo \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    xml \
-    intl
+    libzip-dev \
+    libicu-dev \
+    libpq-dev \
+    locales \
+    zlib1g-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+    pdo pdo_mysql mbstring zip exif pcntl intl gd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
