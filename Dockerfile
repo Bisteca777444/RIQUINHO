@@ -1,3 +1,4 @@
+FROM php:8.2-fpm
 RUN apk update && apk add --no-cache \
     bash \
     curl \
